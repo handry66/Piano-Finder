@@ -529,10 +529,20 @@
                 let images = [];
                 const imgElements = doc.querySelectorAll('ul.list img, .pa2 img');
                 imgElements.forEach(img => {
-                    let src = img.src;
-                    if (src.startsWith('file://') || src.startsWith('/')) src = `https://pianos.pub${img.getAttribute('src')}`;
-                    if (!images.includes(src) && !src.includes('avatar')) images.push(src);
-                });
+    let src = img.getAttribute('src'); // Use getAttribute to get the raw string
+    if (!src) return;
+
+    // Convert relative paths to absolute
+    if (src.startsWith('/')) {
+        src = `https://pianos.pub${src}`;
+    } else if (!src.startsWith('http')) {
+        src = `https://pianos.pub/${src}`;
+    }
+
+    if (!images.includes(src) && !src.includes('avatar')) {
+        images.push(src);
+    }
+});
                 if (images.length === 0) images.push('https://via.placeholder.com/600x400?text=No+Photo+Available');
 
                 const desc = doc.querySelector('ul.list li div.pa2')?.innerText.trim() || "A public piano waiting to be played.";
